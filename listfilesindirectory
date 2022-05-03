@@ -1,0 +1,93 @@
+<?php
+
+namespace WooCommerce\Servlet;
+
+use WWF\Tools\FileUtils;
+use WWF\Tools\StringUtils;
+
+class ListFilesInDirectory {
+
+    public function ListFiles (string $fileName): array
+    {
+        $fileutils = new FileUtils();
+        $folder = ($fileName);
+        $fileName = '';
+        $list = [];
+        $filenames = $fileutils->readFiles($folder);
+
+        foreach ($filenames as $filename) {
+            if (
+                $this->isValidFilename($filename) &&
+                $this->hasValidFileContent($folder . '/' . $filename)
+           )
+        {
+            $list[] = $filename;
+
+            }
+         }
+        return $list;
+    }
+
+    public function isValidFilename (string $filename): bool
+     {
+        $stringutils = new StringUtils();
+        if ($stringutils->startsWith($filename, 'get_') &&
+            $stringutils->endsWith($filename, '.php')) {
+            return true;
+        }
+        return false;
+    }
+
+    private function hasValidFileContent (string $filename): bool
+    { //this function looks in the file and checks if argv,countwwf,stringutils and if isset are in the file
+            //if they are not in the file we will see the file in the output
+        $filecontents = file_get_contents($filename);
+        if (strpos( $filecontents,'argv' ) === false) {
+           $filefunction = $this->makeNewFileAndPrintNames($filename);
+           return false;
+        }
+        if (strpos( $filecontents,'count_wwf' ) === false) {
+            $filefunction = $this->makeNewFileAndPrintNames($filename);
+            return false;
+        }
+        return false;
+
+        $filecontents = file_get_contents($filename);
+        if (strpos( $filecontents,'StringUtils' ) === false) {
+            $filefunction = $this->makeNewFileAndPrintNames($filename);
+            return false;
+        }
+        if (strpos( $filecontents,'if isset' ) === false) {
+            $filefunction = $this->makeNewFileAndPrintNames($filename);
+             return false;
+        }
+        return false;
+    }
+
+    private function deleteOldFile (string $newFile): bool{
+        //this function deletes the old "foutebestanden.txt" so i dont have to do it by hand/
+            //foutebestanden means wrongfiles
+        $file_pointer = '/var/www/html/test3/api/v2/cloudinvoice/woocommerce/servlet/foutebestanden.txt';
+        if (!unlink($file_pointer)) {
+            return false;
+        }
+        return false;
+    }
+
+    private function makeNewFileAndPrintNames(string $filename): bool {
+            // this function makes the file called wrongfiles/foutebestanden.txt and put the wrong files in this file
+            //
+        $oldFile = '/var/www/html/test3/api/v2/cloudinvoice/woocommerce/servlet/foutebestanden.txt';
+        if(file_exists($oldFile)) {
+            $this->deleteOldFile($filename);
+        }
+
+        $newFile = '/var/www/html/test3/api/v2/cloudinvoice/woocommerce/servlet/foutebestanden.txt';
+        return file_put_contents($newFile, $filename . "\r\n", FILE_APPEND);
+        return true;
+   }
+
+}
+          
+                                                                                                         
+                                                                                               
