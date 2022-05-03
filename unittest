@@ -1,0 +1,30 @@
+<?php
+
+require_once (__DIR__. '/../../autoload.php');
+
+use Woocommerce\Servlet\ListFilesInDirectory;
+
+class testListFilesInDirectory extends \PHPUnit\Framework\TestCase {
+
+   /**
+     * @dataProvider inputTest
+     */
+
+        public function testListFiles ($parms) {
+        $testListFilesInDirectory = new ListFilesInDirectory();
+        $response = $testListFilesInDirectory->ListFiles($parms);
+
+        //print_r($response);
+
+        die();
+        $this->assertTrue(strpos($response, 'php') !== false);
+        }
+
+        public function inputTest() {
+        $parms = "/var/www/html/test3/api/v2/cloudinvoice/woocommerce/servlet";
+        return [
+            [$parms]
+        ];
+    }
+}
+~                                                                                                 
